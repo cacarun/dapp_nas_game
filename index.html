@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <title>Super Dictionary</title>
+    <link rel="stylesheet" href="lib/bootstrap-4.0.0-dist/css/bootstrap.min.css">
+    <style>
+    .container {
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+    @media (min-width: 768px) {
+        .container {
+            width: 750px;
+        }
+    }
+
+    .casino {
+        margin-top: 50px;
+        text-align: center;
+    }
+
+    #loader {
+        width: 150px;
+    }
+
+    ul {
+        margin: 25px;
+        list-style-type: none;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        grid-column-gap: 25px;
+        grid-row-gap: 25px;
+    }
+
+    li {
+        padding: 20px;
+        margin-right: 5px;
+        border-radius: 50%;
+        cursor: pointer;
+        background-color: #fff;
+        border: -2px solid #bf0d9b;
+        color: #bf0d9b;
+        box-shadow: 3px 5px #bf0d9b;
+    }
+
+    li:hover {
+        background-color: #bf0d9b;
+        color: white;
+        box-shadow: 0px 0px #bf0d9b;
+    }
+
+    li:active {
+        opacity: 0.7;
+    }
+
+    * {
+        color: #444444;
+    }
+
+    #has-won {
+        color: green;
+    }
+
+    #has-lost {
+        color: red;
+    }
+    body{
+        background-image: url(img/bg.jpg);
+        background-repeat: no-repeat;
+        background-size:100% 120%;
+        -moz-background-size:100% 120%;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class=" casino logo">
+            <div class="name"><h2>Welcome to the Number-Game-Dapp</h2></div>
+            <div class="img logo_rotate">
+                <img src="img/logo.png" alt="" style="height:200px;">
+            </div>
+        </div>
+        <div class="casino container">
+            <h4>Please pick a number between 1 and 10</h4> Amount to pay:
+            <input  placeholder="1 NAS" disabled="disabled" style="display:inline-block;width:50px;">
+            <br/>
+            <br/>
+            <h5 style="color:#725D6D;">If you guess the right number you will win 10 NAs,or you will lose 1 NAS.</h5>
+            <ul>
+                <li value="1" onclick="clickNumber(this.value)">1</li>
+                <li value="2" onclick="clickNumber(this.value)">2</li>
+                <li value="3" onclick="clickNumber(this.value)">3</li>
+                <li value="4" onclick="clickNumber(this.value)">4</li>
+                <li value="5" onclick="clickNumber(this.value)">5</li>
+                <li value="6" onclick="clickNumber(this.value)">6</li>
+                <li value="7" onclick="clickNumber(this.value)">7</li>
+                <li value="8" onclick="clickNumber(this.value)">8</li>
+                <li value="9" onclick="clickNumber(this.value)">9</li>
+                <li value="10" onclick="clickNumber(this.value)">10</li>
+            </ul>
+        </div>
+    </div>
+ 
+    <script src=lib/jquery-3.3.1.min.js></script>
+    <script src=lib/nebPay.js></script>
+    <script src=lib/bootstrap-4.0.0-dist/js/bootstrap.min.js></script>
+    <script src=lib/nebulas.js></script>
+    <script src=lib/bignumber.js></script>
+    <script>
+    "use strict";
+
+    var NebPay = require("nebpay");
+    var nebPay = new NebPay();
+    var serialNumber;
+    var intervalQuery;
+   
+    function clickNumber (number) {
+        if(typeof(webExtensionWallet) === "undefined"){
+           alert ("Extension wallet is not installed, please install it first.");
+           return ;
+        }
+        var to = "n1eUexY5tSRu5fniKLzZGjLmF3BNhEpDGJf";  //合约地址
+        var value = "1";   //往合转的NAS数量
+        var callFunction = "clipIn";  //调用合约的clipIn函数
+        var callArgs =[number];  //传入使用者挑选的数字
+        console.log(callArgs);
+        serialNumber = nebPay.call(to, value, callFunction, callArgs, {    //使用nebpay的call接口去调用合约,
+             qrcode: {
+                showQRCode: false,
+                container: undefined
+            },
+            goods: {
+                name: "clipIn",
+                desc: "pick number and clin in"
+            },
+            listener: searchResult        //设置listener, 处理交易返回信息
+        });
+        intervalQuery = setInterval(function () {
+            funcIntervalQuery();
+        }, 30000);
+    };
+    
+    function funcIntervalQuery() {
+        nebPay.queryPayInfo(serialNumber)   //search transaction result from server (result upload to server by app)
+            .then(function (resp) {
+                console.log("tx result: " + resp)   //resp is a JSON string
+                var respObject = JSON.parse(resp)
+                if(respObject.code == 0){
+                    alert("clipIn  succeed!")
+                    clearInterval(intervalQuery)
+                }
+            })
+            .catch(function (err) {
+                console.log(err);
+            });
+    }
+    function searchResult(resp) {
+        console.log("response of push: " + JSON.stringify(resp))
+    }
+    </script>
+</body>
+
+</html>
