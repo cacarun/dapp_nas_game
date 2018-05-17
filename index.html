@@ -21,8 +21,14 @@
         }
     }
 
-    .casino {
+    .name {
         margin-top: 50px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .casino {
+        margin-top: 30px;
         text-align: center;
     }
 
@@ -83,17 +89,18 @@
 <body>
     <div class="container">
         <div class=" casino logo">
-            <div class="name"><h2>Welcome to the Number-Game-Dapp</h2></div>
+            <div class="name"><h2>NAS 砸金蛋游戏</h2></div>
             <div class="img logo_rotate">
-                <img src="img/logo.png" alt="" style="height:200px;">
+                <img src="img/logo.png" alt="" style="height:160px;">
             </div>
         </div>
         <div class="casino container">
-            <h4>Please pick a number between 1 and 10</h4> Amount to pay:
+            <h4>请从以下 10 个金蛋中选择一个属于你的幸运蛋</h4> 仅仅需要支付：
+            <br/>
             <input  placeholder="1 NAS" disabled="disabled" style="display:inline-block;width:50px;">
             <br/>
             <br/>
-            <h5 style="color:#725D6D;">If you guess the right number you will win 10 NAs,or you will lose 1 NAS.</h5>
+            <h5 style="color:#725D6D; margin-bottom:50px;">如果幸运女神眷顾，你将会获得 10 NAS，否则也只失去 1 NAS，加油哟！</h5>
             <ul>
                 <li value="1" onclick="clickNumber(this.value)">1</li>
                 <li value="2" onclick="clickNumber(this.value)">2</li>
@@ -124,7 +131,7 @@
    
     function clickNumber (number) {
         if(typeof(webExtensionWallet) === "undefined"){
-           alert ("Extension wallet is not installed, please install it first.");
+           alert ("检测到当前环境没有安装 Web 钱包插件，请先安装 Web 钱包插件！");
            return ;
         }
         var to = "n1eUexY5tSRu5fniKLzZGjLmF3BNhEpDGJf";  //合约地址
